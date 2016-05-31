@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class GPSListener implements LocationListener {
 
@@ -33,7 +34,8 @@ public class GPSListener implements LocationListener {
         progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progress.setIndeterminate(true);
         progress.setCancelable(true);
-        progress.setProgress(0);
+        progress.setMax(MAX_PERCENT);
+        progress.setProgress(10);
         progress.show();
     }
 
@@ -46,8 +48,11 @@ public class GPSListener implements LocationListener {
             accuracyDepth = accuracyDepth + 1;
             progressPercent = accuracyDepth * (MAX_PERCENT/ACCURACY_ATTEMPTS);
             progress.setProgress(progressPercent);
+            progress.show();
 
         } else if (initialLocation != null && location != null) {
+
+            progress.dismiss();
 
             isBetterLocation = isBetterLocation(prevLocation, location);
 
