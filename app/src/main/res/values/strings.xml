@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">ITrackMap</string>
-    <string name="title_activity_itrack_map">Tracking on Map</string>
+    <string name="title_activity_itrack_map">GTrack</string>
 </resources>

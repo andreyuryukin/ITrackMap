@@ -1,42 +1,28 @@
 package com.example.desktop.itrackmap;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.widget.Toast;
 
 public class GPSListener implements LocationListener {
 
     public ITrackMapActivity iTrackMapActivity;
     public Location initialLocation;
     public Location prevLocation;
-    public ProgressDialog progress;
-    public Context context;
 
     public int accuracyDepth;
     public int progressPercent;
+    public boolean setInitMarker;
     public boolean isBetterLocation;
     public static final int ONE_MINUTE = 1000 * 60;
-    public static final int ACCURACY_ATTEMPTS = 7;
+    public static final int ACCURACY_ATTEMPTS = 4;
     public final int MAX_PERCENT = 100;
 
-    public GPSListener(ITrackMapActivity act, Location initLoc, Context c) {
+    public GPSListener(ITrackMapActivity act, Location initLoc) {
 
-        context = c;
         iTrackMapActivity = act;
         initialLocation = initLoc;
         accuracyDepth = 0;
-
-        progress = new ProgressDialog(context);
-        progress.setMessage("Setting GPS Location ...");
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setIndeterminate(true);
-        progress.setCancelable(true);
-        progress.setMax(MAX_PERCENT);
-        progress.setProgress(10);
-        progress.show();
     }
 
     @Override
@@ -46,19 +32,24 @@ public class GPSListener implements LocationListener {
             initialLocation = location;
             prevLocation = location;
             accuracyDepth = accuracyDepth + 1;
-            progressPercent = accuracyDepth * (MAX_PERCENT/ACCURACY_ATTEMPTS);
-            progress.setProgress(progressPercent);
-            progress.show();
+            progressPercent = accuracyDepth * (MAX_PERCENT / ACCURACY_ATTEMPTS);
+
+            iTrackMapActivity.updateProgress(progressPercent, false);
+
+            setInitMarker = true;
 
         } else if (initialLocation != null && location != null) {
-
-            progress.dismiss();
 
             isBetterLocation = isBetterLocation(prevLocation, location);
 
             if (isBetterLocation) {
                 prevLocation = location;
-                iTrackMapActivity.updateMap(initialLocation, location);
+                iTrackMapActivity.updateMap(initialLocation, location, setInitMarker);
+            }
+
+            if (setInitMarker) {
+                setInitMarker = false;
+                iTrackMapActivity.updateProgress(progressPercent, true);
             }
         }
     }
