@@ -11,12 +11,11 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -33,7 +32,6 @@ public class ITrackMapActivity extends FragmentActivity implements OnMapReadyCal
     public Location initialLocation;
     public Location mostUpdateLocation;
     public LatLng latLng;
-    public String coordinates;
     public ProgressDialog progress;
     public MarkerOptions initMarker;
     public MarkerOptions currMarker;
@@ -58,7 +56,6 @@ public class ITrackMapActivity extends FragmentActivity implements OnMapReadyCal
         progress = new ProgressDialog(ITrackMapActivity.this);
         progress.setMessage("Setting GPS Location ...");
         progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setIndeterminate(true);
         progress.setCancelable(true);
         progress.setMax(MAX_PERCENT);
         progress.setProgress(0);
@@ -139,12 +136,13 @@ public class ITrackMapActivity extends FragmentActivity implements OnMapReadyCal
             mMap.clear();
 
             latLng = new LatLng(initialLocation.getLatitude(), initialLocation.getLongitude());
-            initMarker = new MarkerOptions().position(latLng).title("Start");
+            initMarker = new MarkerOptions().position(latLng).title("Start Location");
+            initMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             mMap.addMarker(initMarker);
 
             latLng = new LatLng(initialLocation.getLatitude(), initialLocation.getLongitude());
-            coordinates = "(" + mostUpdateLocation.getLatitude() + ";" + mostUpdateLocation.getLongitude() + ")";
-            currMarker = new MarkerOptions().position(latLng).title(coordinates);
+            currMarker = new MarkerOptions().position(latLng).title("Current Location");
+            currMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             mMap.addMarker(currMarker);
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_LEVEL));
@@ -154,16 +152,16 @@ public class ITrackMapActivity extends FragmentActivity implements OnMapReadyCal
             mMap.clear();
 
             latLng = new LatLng(initialLocation.getLatitude(), initialLocation.getLongitude());
-            initMarker.position(latLng).title("Start Point");
+            initMarker.position(latLng).title("Start Location");
+            initMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             mMap.addMarker(initMarker);
 
             latLng = new LatLng(mostUpdateLocation.getLatitude(), mostUpdateLocation.getLongitude());
-            coordinates = "(" + mostUpdateLocation.getLatitude() + ";" + mostUpdateLocation.getLongitude() + ")";
-            currMarker.position(latLng).title(coordinates);
+            currMarker.position(latLng).title("Current Location");
+            currMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             mMap.addMarker(currMarker);
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_LEVEL));
-
         }
     }
 
@@ -173,12 +171,10 @@ public class ITrackMapActivity extends FragmentActivity implements OnMapReadyCal
 
         if (dismiss) {
             progress.dismiss();
-            Log.v("updateProgress", "dismiss()");
         } else {
             progressBarHandler.post(new Runnable() {
                 public void run() {
                     progress.setProgress(progressPercent);
-                    Log.v("updateProgress", "public void run() " + progressPercent);
                 }
             });
         }

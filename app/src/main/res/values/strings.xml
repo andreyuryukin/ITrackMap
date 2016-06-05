@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ITrackMap</string>
     <string name="title_activity_itrack_map">GTrack</string>
+    <string name="contentDesc">Content</string>
+    <string name="textDist">0 m</string>
+    <string name="textSpeed">0 Km/H</string>
 </resources>
